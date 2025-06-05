@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Listagem de Encomendas</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f2f2f2;
+      color: #333;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.5em;
+    }
+    header nav button {
+      font-size: 1em;
+      padding: 8px 14px;
+      border: none;
+      border-radius: 6px;
+      background: #e0e0e0;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+    header nav button:hover {
+      background: #d0d0d0;
+    }
+    .filtros {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .filtros input, .filtros select {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 0.95em;
+    }
+    section {
+      margin-bottom: 30px;
+    }
+    h2 {
+      font-size: 1.2em;
+      border-bottom: 2px solid #ccc;
+      padding-bottom: 4px;
+      margin-top: 30px;
+    }
+    .mes {
+      margin-top: 20px;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    li {
+      background: #fff;
+      margin-bottom: 10px;
+      padding: 10px 15px;
+      border-radius: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .dados {
+      flex-grow: 1;
+      min-width: 250px;
+    }
+    .dados span {
+      display: inline-block;
+      margin-right: 12px;
+      font-size: 0.95em;
+    }
+    .valor {
+      font-weight: bold;
+      display: block;
+      margin-top: 4px;
+    }
+    .botoes button {
+      margin-left: 6px;
+      padding: 5px 10px;
+      font-size: 1em;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .botoes .finalizar {
+      background: #4caf50;
+      color: white;
+    }
+    .botoes .apagar {
+      background: #f44336;
+      color: white;
+    }
+    .botoes .finalizar:hover {
+      background: #45a047;
+    }
+    .botoes .apagar:hover {
+      background: #d32f2f;
+    }
+    li.finalizada {
+      background: #f0f8f0;
+      color: #2f662f;
+    }
+    @media (max-width: 600px) {
+      li {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .botoes {
+        margin-top: 10px;
+      }
+      .dados span {
+        display: block;
+        margin-bottom: 6px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Listagem de Encomendas</h1>
+  <nav>
+    <button onclick="location.href='home.html'">🏠</button>
+    <button onclick="location.href='encomendas.html'">➕ Nova</button>
+  </nav>
+</header>
+
+<div class="filtros">
+  <input type="text" id="filtroNome" placeholder="Filtrar por nome" oninput="carregarEncomendas()" />
+  <select id="filtroMes" onchange="carregarEncomendas()">
+    <option value="">Todos os meses</option>
+  </select>
+</div>
+
+<section id="ativas">
+  <h2>📌 Encomendas Ativas</h2>
+  <div id="listaAtivas"></div>
+</section>
+
+<section id="finalizadas">
+  <h2>✅ Encomendas Finalizadas</h2>
+  <div id="listaFinalizadas"></div>
+</section>
+
+<script>
+function normalizar(str) {
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+
+function formatarMesAno(data) {
+  const [ano, mes] = data.split('-');
+  const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", 
+                 "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+  return `${meses[parseInt(mes)-1]} de ${ano}`;
+}
+
+async function carregarEncomendas() {
+  try {
+    const resp = await fetch('/api/encomendas');
+    if (!resp.ok) throw new Error('Erro a obter dados');
+    const encomendas = await resp.json();
+
+    const filtroNome = normalizar(document.getElementById("filtroNome").value);
+    const filtroMes = document.getElementById("filtroMes").value;
+
+    const listaAtivas = document.getElementById('listaAtivas');
+    const listaFinalizadas = document.getElementById('listaFinalizadas');
+
+    listaAtivas.innerHTML = '';
+    listaFinalizadas.innerHTML = '';
+
+    const gruposAtivas = {};
+    const gruposFinalizadas = {};
+    const mesesUnicos = new Set();
+
+    encomendas.forEach(e => {
+      if (filtroNome && !normalizar(e.nome).includes(filtroNome)) return;
+
+      const mes = e.data.slice(0, 7); // yyyy-mm
+      if (filtroMes && mes !== filtroMes) return;
+      mesesUnicos.add(mes);
+
+      const grupo = e.finalizada ? gruposFinalizadas : gruposAtivas;
+      if (!grupo[mes]) grupo[mes] = [];
+      grupo[mes].push(e);
+    });
+
+    // Preencher o dropdown de meses
+    const filtroMesSelect = document.getElementById("filtroMes");
+    filtroMesSelect.innerHTML = '<option value="">Todos os meses</option>';
+    Array.from(mesesUnicos)
+      .sort((a, b) => b.localeCompare(a)) // mais recentes primeiro
+      .forEach(mes => {
+        const opt = document.createElement("option");
+        opt.value = mes;
+        opt.textContent = formatarMesAno(mes);
+        filtroMesSelect.appendChild(opt);
+      });
+
+    function renderGrupo(grupo, container, finalizada) {
+      const meses = Object.keys(grupo).sort((a, b) => b.localeCompare(a));
+      meses.forEach(mes => {
+        const divMes = document.createElement("div");
+        divMes.className = "mes";
+        const titulo = document.createElement("h3");
+        titulo.textContent = formatarMesAno(mes);
+        divMes.appendChild(titulo);
+
+        const ul = document.createElement("ul");
+        grupo[mes].sort((a, b) => a.data.localeCompare(b.data)).forEach(e => {
+          const li = document.createElement('li');
+          li.dataset.numero = e.numero;
+          if (finalizada) li.classList.add('finalizada');
+
+          const dados = document.createElement('div');
+          dados.className = 'dados';
+          dados.innerHTML =
+            `<span><strong>Nº:</strong> ${e.numero}</span>` +
+            `<span><strong>Nome:</strong> ${e.nome}</span>` +
+            (e.telemovel ? `<span><strong>Telemóvel:</strong> ${e.telemovel}</span>` : '') +
+            `<span><strong>Produto:</strong> ${e.produto}</span>` +
+            `<span><strong>Quantidade:</strong> ${e.quantidade}</span>` +
+            `<span><strong>Data:</strong> ${e.data}</span>`;
+
+          if (finalizada) {
+            const finalInfo = document.createElement('span');
+            finalInfo.className = 'valor';
+            finalInfo.textContent = `Finalizada a ${e.dataFinalizacao} - Valor: ${Number(e.valorAngariado).toFixed(2)}€`;
+            dados.appendChild(finalInfo);
+          }
+
+          const botoes = document.createElement('div');
+          botoes.className = 'botoes';
+
+          if (finalizada) {
+            const btnApagar = document.createElement('button');
+            btnApagar.className = 'apagar';
+            btnApagar.textContent = '🗑️';
+            btnApagar.title = 'Apagar';
+            btnApagar.onclick = () => apagarEncomenda(e.numero, true);
+            botoes.appendChild(btnApagar);
+          } else {
+            const btnFinalizar = document.createElement('button');
+            btnFinalizar.className = 'finalizar';
+            btnFinalizar.textContent = '✅';
+            btnFinalizar.title = 'Finalizar';
+            btnFinalizar.onclick = () => finalizarEncomenda(e.numero);
+            botoes.appendChild(btnFinalizar);
+
+            const btnApagar = document.createElement('button');
+            btnApagar.className = 'apagar';
+            btnApagar.textContent = '🗑️';
+            btnApagar.title = 'Apagar';
+            btnApagar.onclick = () => apagarEncomenda(e.numero, false);
+            botoes.appendChild(btnApagar);
+          }
+
+          li.appendChild(dados);
+          li.appendChild(botoes);
+          ul.appendChild(li);
+        });
+
+        divMes.appendChild(ul);
+        container.appendChild(divMes);
+      });
+    }
+
+    renderGrupo(gruposAtivas, listaAtivas, false);
+    renderGrupo(gruposFinalizadas, listaFinalizadas, true);
+
+  } catch (error) {
+    alert('Erro ao carregar encomendas: ' + error.message);
+  }
+}
+
+async function finalizarEncomenda(numero) {
+  const valorStr = prompt('Introduz o valor angariado para esta encomenda (em euros):');
+  if (valorStr === null) return;
+  const valor = parseFloat(valorStr.replace(',', '.'));
+  if (isNaN(valor) || valor < 0) {
+    alert('Por favor, introduz um valor válido.');
+    return;
+  }
+  const dataFinalizacao = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  try {
+    const resp = await fetch(`/finalizar-encomenda/${encodeURIComponent(numero)}`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ valorAngariado: valor, dataFinalizacao })
+    });
+    if (!resp.ok) throw new Error('Erro ao finalizar encomenda');
+    await carregarEncomendas();
+  } catch (e) {
+    alert('Erro: ' + e.message);
+  }
+}
+
+async function apagarEncomenda(numero, finalizada) {
+  if (!confirm('Tens a certeza que queres apagar esta encomenda? Esta ação não pode ser revertida.')) return;
+  try {
+    const url = `/apagar-encomenda/${encodeURIComponent(numero)}?finalizada=${finalizada ? '1' : '0'}`;
+    const resp = await fetch(url, { method: 'DELETE' });
+    if (!resp.ok) throw new Error('Erro ao apagar encomenda');
+    await carregarEncomendas();
+  } catch (e) {
+    alert('Erro: ' + e.message);
+  }
+}
+
+window.onload = carregarEncomendas;
+</script>
+
+</body>
+</html>

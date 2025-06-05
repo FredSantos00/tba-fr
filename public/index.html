@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Introduz o Código</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="title">Digite o código</div>
+    
+<div id="erroPopup" class="erro-popup">Código incorreto. Tenta outra vez.</div>
+
+    <div class="dots">
+      <div class="dot" id="dot1"></div>
+      <div class="dot" id="dot2"></div>
+      <div class="dot" id="dot3"></div>
+      <div class="dot" id="dot4"></div>
+    </div>
+
+    <div class="keypad">
+      <button class="btn" onclick="addDigit('1')">1</button>
+      <button class="btn" onclick="addDigit('2')">2</button>
+      <button class="btn" onclick="addDigit('3')">3</button>
+      <button class="btn" onclick="addDigit('4')">4</button>
+      <button class="btn" onclick="addDigit('5')">5</button>
+      <button class="btn" onclick="addDigit('6')">6</button>
+      <button class="btn" onclick="addDigit('7')">7</button>
+      <button class="btn" onclick="addDigit('8')">8</button>
+      <button class="btn" onclick="addDigit('9')">9</button>
+      <button class="btn" onclick="clearAll()">←</button>
+      <button class="btn" onclick="addDigit('0')">0</button>
+      <button class="btn" onclick="removeLast()">⌫</button>
+    </div>
+
+    <div class="bottom-row">
+      <span>Cancelar</span>
+      <span>Emergência</span>
+    </div>
+  </div>
+
+  <form id="codeForm" method="POST" action="/verificar-codigo">
+    <input type="hidden" name="codigo" id="codigoInput" />
+  </form>
+
+  <script src="script.js" defer></script>
+ <script>
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('erro') === '1') {
+    const popup = document.getElementById("erroPopup");
+    popup.classList.add("mostrar");
+    setTimeout(() => {
+      popup.classList.remove("mostrar");
+    }, 1000);
+  }
+ </script>
+</body>
+</html>

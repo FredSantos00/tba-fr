@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Saídas</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    header {
+      margin-top: 30px;
+      padding: 20px 0;
+      background: #f5f5f5;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+      position: relative;
+       
+    }
+
+
+    header h1 {
+      text-align: center;
+      margin: 0;
+      font-size: 28px;
+    }
+    
+    body {
+      font-family: "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 0 10px;
+      max-width: 700px;
+      
+      margin-inline: auto;
+      background: #f5f5f5;
+      font-size: 16px;
+    }
+
+   
+    nav {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+
+    #homeBtn {
+      padding: 6px 10px;
+      font-size: 15px;
+      border: none;
+      border-radius: 6px;
+      background-color: #f0f0f0;
+      transition: background 0.2s;
+    }
+
+    .conteudo {
+      margin-top: 30px; /* mais espaço abaixo do header */
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    form {
+      margin-top: 20px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    form, .filtros {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    input, button, select {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+    }
+    button:hover{
+      background-color: #388E3C;
+    }
+
+    .filtros {
+      flex-direction: row;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .filtros input,
+    .filtros select {
+      flex: 1;
+      min-width: 120px;
+      font-size: 14px;
+    }
+
+    .mes {
+      font-weight: bold;
+      margin-top: 25px;
+      margin-bottom: 12px;
+      font-size: 20px;
+    }
+
+    .compra {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px dashed #ccc;
+      padding: 6px 0;
+      gap: 20px;
+    }
+
+    .descricao {
+      flex-grow: 1;
+      word-break: break-word;
+    }
+
+    .valor-apagar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .total {
+      display: flex;
+      justify-content: space-between;
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 10px;
+      margin-bottom: 18px;
+    }
+
+    #verMaisBtn {
+      margin: 30px auto;
+      display: block;
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      background: #4CAF50;
+      color: white;
+      font-size: 16px;
+    }
+    #verMaisBtn:hover{
+      background-color: #388E3C;
+    }
+
+    .tituloMaisAntigas {
+      font-size: 26px;
+      font-weight: bold;
+      margin-top: 40px;
+      margin-bottom: 10px;
+      text-align: center;
+      color: #333;
+    }
+
+    .btnApagar {
+      background-color: #eeeeee;
+      color: black;
+      border: none;
+      border-radius: 8px;
+      padding: 4px 8px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+  </style>
+
+
+
+</head>
+<body>
+  <header>
+    <h1>Saídas (Compras)</h1>
+    <nav>
+      <button id="homeBtn" onclick="window.location.href='home.html'">🏠</button>
+    </nav>
+  </header>
+  
+
+  <div class="conteudo">
+    
+    <form id="formSaida">
+      <input type="text" id="produto" placeholder="Produto" required />
+      <input type="text" id="fornecedor" placeholder="Fornecedor" required />
+      <input type="number" id="valor" placeholder="Valor (€)" step="0.01" required />
+      <input type="date" id="data" required />
+      <button type="submit">Adicionar Compra</button>
+    </form>
+
+    <div class="filtros">
+      <input type="text" id="filtroProduto" placeholder="Filtrar por produto">
+      <select id="filtroMes">
+        <option value="">Mês</option>
+      </select>
+    </div>
+
+    <div id="listaSaidas"></div>
+    <div id="totalFiltrado" class="total" style="display:none;"></div>
+  </div>
+    
+  <script>
+    let comprasOriginais = [];
+    let mostrarTodos = false;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("data").value = new Date().toISOString().slice(0, 10);
+      carregarSaidas();
+    });
+
+    document.getElementById("formSaida").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const produto = document.getElementById("produto").value.trim();
+      const fornecedor = document.getElementById("fornecedor").value.trim();
+      const valor = parseFloat(document.getElementById("valor").value.trim());
+      const data = document.getElementById("data").value;
+
+      if (!produto || !fornecedor || isNaN(valor) || !data) {
+        alert("Por favor preenche todos os campos.");
+        return;
+      }
+
+      const novaCompra = { produto, fornecedor, valor, data };
+
+      const resposta = await fetch("/saidas", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(novaCompra)
+      });
+
+      if (resposta.ok) {
+        document.getElementById("formSaida").reset();
+        document.getElementById("data").value = new Date().toISOString().slice(0, 10);
+        carregarSaidas();
+      } else {
+        alert("Erro ao adicionar compra.");
+      }
+    });
+
+    document.getElementById("filtroProduto").addEventListener("input", filtrarCompras);
+    document.getElementById("filtroMes").addEventListener("change", filtrarCompras);
+
+    async function carregarSaidas() {
+      const resposta = await fetch("/saidas");
+      const compras = await resposta.json();
+      comprasOriginais = compras;
+      atualizarFiltroMes(compras);
+      renderizarCompras(compras);
+    }
+
+    function atualizarFiltroMes(compras) {
+      const select = document.getElementById("filtroMes");
+      const meses = [...new Set(compras.map(c => c.data.slice(0, 7)))];
+      const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+                          "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+
+      select.innerHTML = '<option value="">Filtrar por Mês</option>';
+      meses.sort().reverse().forEach(m => {
+        const [ano, mes] = m.split("-");
+        const nomeMes = nomesMeses[parseInt(mes, 10) - 1];
+        select.innerHTML += `<option value="${m}">${nomeMes} de ${ano}</option>`;
+      });
+    }
+
+    function filtrarCompras() {
+      const produto = document.getElementById("filtroProduto").value.toLowerCase();
+      const mes = document.getElementById("filtroMes").value;
+
+      const filtradas = comprasOriginais.filter(c => {
+        return (
+          (!mes || c.data.startsWith(mes)) &&
+          (!produto || c.produto.toLowerCase().includes(produto))
+        );
+      });
+
+      const totalDiv = document.getElementById("totalFiltrado");
+      if (produto) {
+        const total = filtradas.reduce((soma, c) => soma + (parseFloat(c.valor) || 0), 0);
+        totalDiv.style.display = "flex";
+        totalDiv.innerHTML = `<span>Total do produto:</span><span>${total.toFixed(2)}€</span>`;
+      } else {
+        totalDiv.style.display = "none";
+        totalDiv.innerHTML = "";
+      }
+
+      mostrarTodos = !!produto || !!mes; // Mostra tudo se houver filtro
+      renderizarCompras(filtradas);
+    }
+
+    function formatarMesAno(chave) {
+      const [mes, ano] = chave.split("/");
+      const mesesNomes = [
+        "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+        "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+      ];
+      return `${mesesNomes[parseInt(mes, 10) - 1]} de ${ano}`;
+    }
+
+    async function eliminarCompra(id) {
+      if (!confirm("Eliminar esta compra?")) return;
+      const resposta = await fetch(`/saidas/${id}`, { method: "DELETE" });
+      if (resposta.ok) {
+        carregarSaidas();
+      } else {
+        alert("Erro ao eliminar compra.");
+      }
+    }
+
+    function renderizarCompras(compras, filtroAtivo = false) {
+      const grupoPorMes = {};
+      compras.forEach((compra) => {
+        const [ano, mes] = compra.data.split("-");
+        const chave = `${String(mes).padStart(2, '0')}/${ano}`;
+        if (!grupoPorMes[chave]) grupoPorMes[chave] = [];
+        grupoPorMes[chave].push(compra);
+      });
+
+      const listaDiv = document.getElementById("listaSaidas");
+      listaDiv.innerHTML = "";
+
+      const mesesOrdenados = Object.keys(grupoPorMes).sort((a, b) => {
+        const [ma, aa] = a.split("/").map(Number);
+        const [mb, ab] = b.split("/").map(Number);
+        return new Date(ab, mb - 1) - new Date(aa, ma - 1);
+      });
+
+      const hoje = new Date();
+      const ultimos6Meses = [];
+      for (let i = 0; i < 6; i++) {
+        const data = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
+        const chave = `${String(data.getMonth() + 1).padStart(2, '0')}/${data.getFullYear()}`;
+        ultimos6Meses.push(chave);
+      }
+
+      const mesesRecentes = mesesOrdenados.filter(m => ultimos6Meses.includes(m));
+      const mesesAntigos = mesesOrdenados.filter(m => !ultimos6Meses.includes(m));
+      const mesesParaMostrar = mostrarTodos ? [...mesesRecentes, ...mesesAntigos] : mesesRecentes;
+
+      mesesParaMostrar.forEach((mesAno, index) => {
+        if (mostrarTodos && index === mesesRecentes.length && mesesAntigos.length > 0) {
+          const titulo = document.createElement("div");
+          titulo.className = "tituloMaisAntigas";
+          titulo.textContent = "Mais antigas";
+          listaDiv.appendChild(titulo);
+        }
+
+        const divMes = document.createElement("div");
+        divMes.className = "mes";
+        divMes.textContent = formatarMesAno(mesAno);
+        listaDiv.appendChild(divMes);
+
+        let totalMes = 0;
+        grupoPorMes[mesAno].sort((a, b) => a.data.localeCompare(b.data)).forEach((compra) => {
+          const divCompra = document.createElement("div");
+          divCompra.className = "compra";
+          divCompra.innerHTML = `
+            <div class="descricao">${compra.data} - ${compra.produto} em ${compra.fornecedor}</div>
+            <div class="valor-apagar">
+              <span>${compra.valor.toFixed(2)}€</span>
+              <button class="btnApagar" onclick="eliminarCompra(${compra.id})">🗑️</button>
+            </div>
+          `;
+          listaDiv.appendChild(divCompra);
+          totalMes += compra.valor;
+        });
+
+        const divTotal = document.createElement("div");
+        divTotal.className = "total";
+        divTotal.innerHTML = `<span>Total:</span><span>${totalMes.toFixed(2)}€</span>`;
+        listaDiv.appendChild(divTotal);
+      });
+
+      // Remover botão antigo, se existir
+      const btnAntigo = document.getElementById("toggleMesesBtn");
+      if (btnAntigo) btnAntigo.remove();
+
+      // Adicionar botão "Ver mais..." ou "Ver menos..." consoante o estado, só se não houver filtro
+      if (!filtroAtivo && mesesAntigos.length > 0) {
+        const btn = document.createElement("button");
+        btn.id = "toggleMesesBtn";
+        btn.type = "button";
+        btn.textContent = mostrarTodos ? "Ver menos..." : "Ver mais...";
+        btn.onclick = (e) => {
+          e.preventDefault();
+          mostrarTodos = !mostrarTodos;
+          renderizarCompras(compras, false);
+        };
+        listaDiv.after(btn);
+      }
+
+    }
+
+  </script>
+
+</body>
+</html>

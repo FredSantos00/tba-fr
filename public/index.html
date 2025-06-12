@@ -43,17 +43,24 @@
   <form id="codeForm" method="POST" action="/verificar-codigo">
     <input type="hidden" name="codigo" id="codigoInput" />
   </form>
-
   <script src="script.js" defer></script>
- <script>
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('erro') === '1') {
-    const popup = document.getElementById("erroPopup");
-    popup.classList.add("mostrar");
-    setTimeout(() => {
-      popup.classList.remove("mostrar");
-    }, 1000);
-  }
- </script>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('erro') === '1') {
+        const popup = document.getElementById("erroPopup");
+        popup.classList.add("mostrar");
+        setTimeout(() => {
+          popup.classList.remove("mostrar");
+
+          // Remove o parâmetro 'erro=1' da URL sem recarregar
+          const url = new URL(window.location);
+          url.searchParams.delete('erro');
+          window.history.replaceState({}, document.title, url.pathname);
+        }, 1500);
+      }
+    });
+  </script>
 </body>
 </html>

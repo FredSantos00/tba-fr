@@ -1,159 +1,226 @@
 <!DOCTYPE html>
 <html lang="pt">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Nova encomenda</title>
-  <link rel="stylesheet" href="styles.css" />
-  <script src="https://unpkg.com/@phosphor-icons/web"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f0f2f5;
-      margin: 0;
-      padding: 0;
-      color: #333;
-    }
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem;
-      background: #ffffff;
-      border-bottom: 1px solid #ccc;
-    }
-    header button {
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-    }
-    main {
-      padding: 1.5rem;
-      max-width: 600px;
-      margin: auto;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    input, select, button {
-      padding: 0.75rem;
-      font-size: 1rem;
-      border: 1px solid #bbb;
-      border-radius: 6px;
-    }
-    button[type="submit"] {
-      background-color: #1976d2;
-      color: white;
-      border: none;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    button[type="submit"]:hover {
-      background-color: #145a9e;
-    }
-    .popup {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #323232;
-      color: white;
-      padding: 1rem 1.5rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-      z-index: 9999;
-      animation: fadeout 1s ease-in-out 2s forwards;
-    }
-    @keyframes fadeout {
-      to {
-        opacity: 0;
-        transform: translateX(-50%) translateY(-10px);
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nova Encomenda</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+      * {
+        box-sizing: border-box;
       }
-    }
-  </style>
-</head>
-<body>
 
-  <header>
-    <button onclick="window.location.href='home.html'" title="Início">
-      <i class="ph ph-house"></i>
-    </button>
-    <button onclick="window.location.href='verenc.html'" title="Listagem">
-      <i class="ph ph-list"></i> Listagem
-    </button>
-  </header>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        margin: 0;
+        padding: 0 10px;
+        max-width: 700px;
+        margin-inline: auto;
+        background: #f5f5f5;
+        font-size: 16px;
+      }
 
-  <main>
-    <h1>Nova encomenda</h1>
+      header {
+        margin-top: 30px;
+        padding: 20px 0;
+        background: #f5f5f5;
+        border-bottom: 1px solid #ddd;
+        text-align: center;
+        position: relative;
+      }
 
-    <form id="encomendaForm">
-      <input type="text" name="nome" placeholder="Nome" required />
-      <input type="text" name="telemovel" placeholder="Nº de Telemóvel (opcional)" />
-      <input type="text" name="produto" placeholder="Produto" required />
-      <input type="text" name="quantidade" placeholder="Quantidade" required />
-      <input type="date" name="data" id="dataInput" required />
-      <button type="submit">Adicionar Encomenda</button>
-    </form>
-  </main>
+      header h1 {
+        margin: 0;
+        font-size: 28px;
+      }
 
-  <script>
-    // Preencher data atual
-    const hoje = new Date().toISOString().split('T')[0];
-    document.getElementById("dataInput").value = hoje;
+      nav {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        display: flex;
+        gap: 10px;
+      }
 
-    const form = document.getElementById("encomendaForm");
+      nav button {
+        padding: 6px 10px;
+        font-size: 15px;
+        border: none;
+        border-radius: 6px;
+        background-color: #f0f0f0;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+      nav button:hover {
+        background-color: #d0d0d0;
+      }
 
-      const dados = {
-        nome: form.nome.value,
-        telemovel: form.telemovel.value,
-        produto: form.produto.value,
-        quantidade: form.quantidade.value,
-        data: form.data.value
-      };
+      .conteudo {
+        margin-top: 30px;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      }
 
-      try {
-        const resposta = await fetch("/adicionar-encomenda", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(dados)
-        });
+      form {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
 
-        if (resposta.ok) {
-          mostrarPopup("Encomenda adicionada com sucesso ✅");
-          form.reset();
-          document.getElementById("dataInput").value = hoje;
-        } else {
-          mostrarPopup("Erro ao adicionar encomenda ❌");
+      input[type="text"],
+      input[type="tel"],
+      input[type="date"] {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        background-color: white;
+        transition: background 0.2s;
+        box-sizing: border-box;
+      }
+
+      input[type="text"]:focus,
+      input[type="tel"]:focus,
+      input[type="date"]:focus {
+        background-color: white;
+        outline: none;
+        border-color: #1976d2;
+      }
+
+      button[type="submit"] {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        padding: 12px 20px; /* aumenta a altura e a largura do botão */
+        font-size: 16px;    /* opcional, para texto maior */
+        border-radius: 6px; /* para manter bordas arredondadas */
+        transition: background 0.3s;
+      }
+
+      button[type="submit"]:hover {
+        background-color: #388E3C;
+      }
+
+      
+
+      .popup {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #323232;
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        z-index: 9999;
+        animation: fadeout 1s ease-in-out 2s forwards;
+      }
+
+      @keyframes fadeout {
+        to {
+          opacity: 0;
+          transform: translateX(-50%) translateY(-10px);
         }
-      } catch (erro) {
-        console.error(erro);
-        mostrarPopup("Erro de ligação ao servidor ⚠️");
       }
-    });
 
-    function mostrarPopup(mensagem) {
-      const popup = document.createElement("div");
-      popup.className = "popup";
-      popup.textContent = mensagem;
-      document.body.appendChild(popup);
-      setTimeout(() => {
-        popup.remove();
-      }, 3000);
-    }
-  </script>
+      @media (min-width: 768px) {
+        body {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
 
-</body>
+  <body>
+    <header>
+      <h1>Nova Encomenda</h1>
+      <nav>
+        <button onclick="location.href='verenc.html'">📝 Listagem</button>
+        <button onclick="location.href='home.html'">🏠</button>
+      </nav>
+    </header>
+
+    <main class="conteudo">
+      <form id="encomendaForm">
+        <input
+          type="text"
+          name="nome"
+          placeholder="Ex: Frederico Santos"
+          required
+        />
+        <input
+          type="tel"
+          name="telemovel"
+          placeholder="Ex: 912345678 (opcional)"
+          inputmode="numeric"
+          pattern="[0-9]*"
+        />
+        <input type="text" name="produto" placeholder="Ex: Vinho branco" required />
+        <input type="text" name="quantidade" placeholder="Ex: 3 garrafões" required />
+        <input type="date" name="data" id="dataInput" required />
+        <button type="submit">Adicionar Encomenda</button>
+      </form>
+    </main>
+
+    <script>
+      // Preencher data atual
+      const hoje = new Date().toISOString().split('T')[0];
+      document.getElementById("dataInput").value = hoje;
+
+      const form = document.getElementById("encomendaForm");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const dados = {
+          nome: form.nome.value,
+          telemovel: form.telemovel.value,
+          produto: form.produto.value,
+          quantidade: form.quantidade.value,
+          data: form.data.value
+        };
+
+        try {
+          const resposta = await fetch("/adicionar-encomenda", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(dados)
+          });
+
+          if (resposta.ok) {
+            mostrarPopup("Encomenda adicionada com sucesso ✅");
+            form.reset();
+            document.getElementById("dataInput").value = hoje;
+          } else {
+            mostrarPopup("Erro ao adicionar encomenda ❌");
+          }
+        } catch (erro) {
+          console.error(erro);
+          mostrarPopup("Erro de ligação ao servidor ⚠️");
+        }
+      });
+
+      function mostrarPopup(mensagem) {
+        const popup = document.createElement("div");
+        popup.className = "popup";
+        popup.textContent = mensagem;
+        document.body.appendChild(popup);
+        setTimeout(() => {
+          popup.remove();
+        }, 3000);
+      }
+    </script>
+  </body>
 </html>

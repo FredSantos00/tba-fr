@@ -1,129 +1,146 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pt">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Listagem de Encomendas</title>
   <style>
     body {
-      font-family: system-ui, sans-serif;
+      font-family: "Segoe UI", sans-serif;
       margin: 0;
-      padding: 20px;
-      background-color: #f2f2f2;
-      color: #333;
+      padding: 0 10px;
+      max-width: 700px;
+
+      margin-inline: auto;
+      background: #f5f5f5;
+      font-size: 16px;
     }
+
     header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
+      margin-top: 30px;
+      padding: 20px 0;
+      background: #f5f5f5;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+      position: relative;
+
     }
-    header h1 {
-      margin: 0;
-      font-size: 1.5em;
+
+    nav {
+      position: absolute;
+      top: 20px;
+      right: 20px;
     }
-    header nav button {
-      font-size: 1em;
-      padding: 8px 14px;
-      border: none;
-      border-radius: 6px;
-      background: #e0e0e0;
-      cursor: pointer;
-      margin-left: 8px;
-    }
-    header nav button:hover {
-      background: #d0d0d0;
-    }
+
     .filtros {
       display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
       flex-wrap: wrap;
+      gap: 10px;
+      margin: 10px 0;
     }
-    .filtros input, .filtros select {
+
+    .filtros input,
+    .filtros select {
+      flex: 1;
       padding: 8px;
       border-radius: 6px;
       border: 1px solid #ccc;
-      font-size: 0.95em;
     }
+
     section {
-      margin-bottom: 30px;
-    }
-    h2 {
-      font-size: 1.2em;
-      border-bottom: 2px solid #ccc;
-      padding-bottom: 4px;
-      margin-top: 30px;
-    }
-    .mes {
       margin-top: 20px;
     }
+
     ul {
       list-style: none;
       padding-left: 0;
     }
+
     li {
-      background: #fff;
+      background: white;
+      border: 1px solid #ddd;
+      padding: 12px;
       margin-bottom: 10px;
-      padding: 10px 15px;
-      border-radius: 8px;
       display: flex;
-      flex-wrap: wrap;
       justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      align-items: stretch;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
-    .dados {
-      flex-grow: 1;
-      min-width: 250px;
+    .conteudo {
+      margin-top: 30px; /* mais espaço abaixo do header */
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    .dados span {
-      display: inline-block;
-      margin-right: 12px;
-      font-size: 0.95em;
-    }
-    .valor {
-      font-weight: bold;
-      display: block;
-      margin-top: 4px;
-    }
-    .botoes button {
-      margin-left: 6px;
-      padding: 5px 10px;
-      font-size: 1em;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .botoes .finalizar {
-      background: #4caf50;
-      color: white;
-    }
-    .botoes .apagar {
-      background: #f44336;
-      color: white;
-    }
-    .botoes .finalizar:hover {
-      background: #45a047;
-    }
-    .botoes .apagar:hover {
-      background: #d32f2f;
-    }
+
     li.finalizada {
-      background: #f0f8f0;
-      color: #2f662f;
+      background: #f7f7f7;
     }
-    @media (max-width: 600px) {
-      li {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .botoes {
-        margin-top: 10px;
-      }
-      .dados span {
-        display: block;
-        margin-bottom: 6px;
+
+    .descricao {
+      flex: 1;
+      text-align: left;
+    }
+
+    .descricao .numero {
+      font-size: 0.85em;
+      font-weight: bold;
+      color: #666;
+    }
+
+    .descricao .texto {
+      margin: 4px 0;
+    }
+
+    .descricao .telemovel {
+      margin-top: 4px;
+      font-size: 0.9em;
+      color: #444;
+    }
+
+    .valor {
+      display: block;
+      font-size: 0.85em;
+      color: #222;
+      margin-top: 6px;
+    }
+
+    .botoes {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-end;
+      margin-left: 12px;
+    }
+
+    button {
+      padding: 6px 10px;
+      font-size: 15px;
+      border: none;
+      border-radius: 6px;
+      background-color: #f0f0f0;
+      transition: background 0.2s;
+    }
+    
+
+    button:hover {
+      background-color: #d0d0d0;
+    }
+
+    h1, h2 {
+      text-align: center;
+      margin: 0;
+      font-size: 28px;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        padding: 20px;
       }
     }
   </style>
@@ -133,11 +150,11 @@
 <header>
   <h1>Listagem de Encomendas</h1>
   <nav>
-    <button onclick="location.href='home.html'">🏠</button>
     <button onclick="location.href='encomendas.html'">➕ Nova</button>
+    <button onclick="location.href='home.html'">🏠</button>
   </nav>
 </header>
-
+  <div class="conteudo">
 <div class="filtros">
   <input type="text" id="filtroNome" placeholder="Filtrar por nome" oninput="carregarEncomendas()" />
   <select id="filtroMes" onchange="carregarEncomendas()">
@@ -147,13 +164,68 @@
 
 <section id="ativas">
   <h2>📌 Encomendas Ativas</h2>
-  <div id="listaAtivas"></div>
+  <ul id="listaAtivas"></ul>
 </section>
 
 <section id="finalizadas">
   <h2>✅ Encomendas Finalizadas</h2>
-  <div id="listaFinalizadas"></div>
+  <ul id="listaFinalizadas"></ul>
 </section>
+  <!-- Modal para inserir valor da encomenda -->
+  <div id="modalFinalizar" style="
+    display:none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  ">
+    <div style="
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 300px;
+      width: 90%;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      text-align: center;
+    ">
+      <h3>Valor angariado</h3>
+      <input id="inputValorFinalizar" type="number" min="0" step="0.01" placeholder="€" style="width: 100%; padding: 8px; margin: 10px 0; font-size: 16px;" />
+      <div style="display: flex; justify-content: space-around; margin-top: 15px;">
+        <button id="btnCancelarModal" style="padding: 8px 15px; font-size: 16px; cursor: pointer;">Cancelar</button>
+        <button id="btnOkModal" style="padding: 8px 15px; font-size: 16px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">OK</button>
+      </div>
+    </div>
+  </div>
+  <!-- Modal para confirmar apagar encomenda -->
+  <div id="modalApagar" style="
+    display:none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  ">
+    <div style="
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 320px;
+      width: 90%;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      text-align: center;
+    ">
+      <h3>Confirmar Apagar</h3>
+      <p>Tem a certeza que quer apagar esta encomenda?</p>
+      <div style="display: flex; justify-content: space-around; margin-top: 15px;">
+        <button id="btnCancelarApagar" style="padding: 8px 15px; font-size: 16px; cursor: pointer;">Cancelar</button>
+        <button id="btnOkApagar" style="padding: 8px 15px; font-size: 16px; background-color: #e74c3c; color: white; border: none; cursor: pointer;">Apagar</button>
+      </div>
+    </div>
+  </div>
+    </div>
 
 <script>
 function normalizar(str) {
@@ -162,7 +234,7 @@ function normalizar(str) {
 
 function formatarMesAno(data) {
   const [ano, mes] = data.split('-');
-  const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", 
+  const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
                  "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
   return `${meses[parseInt(mes)-1]} de ${ano}`;
 }
@@ -183,7 +255,7 @@ async function carregarEncomendas() {
     listaFinalizadas.innerHTML = '';
 
     const gruposAtivas = {};
-    const gruposFinalizadas = {};
+    const finalizadas = [];
     const mesesUnicos = new Set();
 
     encomendas.forEach(e => {
@@ -193,16 +265,18 @@ async function carregarEncomendas() {
       if (filtroMes && mes !== filtroMes) return;
       mesesUnicos.add(mes);
 
-      const grupo = e.finalizada ? gruposFinalizadas : gruposAtivas;
-      if (!grupo[mes]) grupo[mes] = [];
-      grupo[mes].push(e);
+      if (e.finalizada) {
+        finalizadas.push(e);
+      } else {
+        if (!gruposAtivas[mes]) gruposAtivas[mes] = [];
+        gruposAtivas[mes].push(e);
+      }
     });
 
-    // Preencher o dropdown de meses
     const filtroMesSelect = document.getElementById("filtroMes");
-    filtroMesSelect.innerHTML = '<option value="">Todos os meses</option>';
+    filtroMesSelect.innerHTML = '<option value="">Mês</option>';
     Array.from(mesesUnicos)
-      .sort((a, b) => b.localeCompare(a)) // mais recentes primeiro
+      .sort((a, b) => b.localeCompare(a))
       .forEach(mes => {
         const opt = document.createElement("option");
         opt.value = mes;
@@ -210,115 +284,182 @@ async function carregarEncomendas() {
         filtroMesSelect.appendChild(opt);
       });
 
-    function renderGrupo(grupo, container, finalizada) {
-      const meses = Object.keys(grupo).sort((a, b) => b.localeCompare(a));
-      meses.forEach(mes => {
-        const divMes = document.createElement("div");
-        divMes.className = "mes";
-        const titulo = document.createElement("h3");
-        titulo.textContent = formatarMesAno(mes);
-        divMes.appendChild(titulo);
-
-        const ul = document.createElement("ul");
-        grupo[mes].sort((a, b) => a.data.localeCompare(b.data)).forEach(e => {
-          const li = document.createElement('li');
-          li.dataset.numero = e.numero;
-          if (finalizada) li.classList.add('finalizada');
-
-          const dados = document.createElement('div');
-          dados.className = 'dados';
-          dados.innerHTML =
-            `<span><strong>Nº:</strong> ${e.numero}</span>` +
-            `<span><strong>Nome:</strong> ${e.nome}</span>` +
-            (e.telemovel ? `<span><strong>Telemóvel:</strong> ${e.telemovel}</span>` : '') +
-            `<span><strong>Produto:</strong> ${e.produto}</span>` +
-            `<span><strong>Quantidade:</strong> ${e.quantidade}</span>` +
-            `<span><strong>Data:</strong> ${e.data}</span>`;
-
-          if (finalizada) {
-            const finalInfo = document.createElement('span');
-            finalInfo.className = 'valor';
-            finalInfo.textContent = `Finalizada a ${e.dataFinalizacao} - Valor: ${Number(e.valorAngariado).toFixed(2)}€`;
-            dados.appendChild(finalInfo);
-          }
-
-          const botoes = document.createElement('div');
-          botoes.className = 'botoes';
-
-          if (finalizada) {
-            const btnApagar = document.createElement('button');
-            btnApagar.className = 'apagar';
-            btnApagar.textContent = '🗑️';
-            btnApagar.title = 'Apagar';
-            btnApagar.onclick = () => apagarEncomenda(e.numero, true);
-            botoes.appendChild(btnApagar);
-          } else {
-            const btnFinalizar = document.createElement('button');
-            btnFinalizar.className = 'finalizar';
-            btnFinalizar.textContent = '✅';
-            btnFinalizar.title = 'Finalizar';
-            btnFinalizar.onclick = () => finalizarEncomenda(e.numero);
-            botoes.appendChild(btnFinalizar);
-
-            const btnApagar = document.createElement('button');
-            btnApagar.className = 'apagar';
-            btnApagar.textContent = '🗑️';
-            btnApagar.title = 'Apagar';
-            btnApagar.onclick = () => apagarEncomenda(e.numero, false);
-            botoes.appendChild(btnApagar);
-          }
-
-          li.appendChild(dados);
-          li.appendChild(botoes);
-          ul.appendChild(li);
-        });
-
-        divMes.appendChild(ul);
-        container.appendChild(divMes);
+    Object.keys(gruposAtivas).sort((a, b) => b.localeCompare(a)).forEach(mes => {
+      gruposAtivas[mes].sort((a, b) => a.data.localeCompare(b.data)).forEach(e => {
+        const li = criarItemEncomenda(e, false);
+        listaAtivas.appendChild(li);
       });
-    }
+    });
 
-    renderGrupo(gruposAtivas, listaAtivas, false);
-    renderGrupo(gruposFinalizadas, listaFinalizadas, true);
+    finalizadas
+      .sort((a, b) => b.dataFinalizacao.localeCompare(a.dataFinalizacao))
+      .forEach(e => {
+        const li = criarItemEncomenda(e, true);
+        listaFinalizadas.appendChild(li);
+      });
 
   } catch (error) {
     alert('Erro ao carregar encomendas: ' + error.message);
   }
 }
 
-async function finalizarEncomenda(numero) {
-  const valorStr = prompt('Introduz o valor angariado para esta encomenda (em euros):');
-  if (valorStr === null) return;
-  const valor = parseFloat(valorStr.replace(',', '.'));
-  if (isNaN(valor) || valor < 0) {
-    alert('Por favor, introduz um valor válido.');
-    return;
+function criarItemEncomenda(e, finalizada) {
+  const li = document.createElement('li');
+  if (finalizada) li.classList.add('finalizada');
+
+  const descricao = document.createElement('div');
+  descricao.className = 'descricao';
+
+  const numero = document.createElement('div');
+  numero.className = 'numero';
+  numero.textContent = e.numero;
+
+  const texto = document.createElement('div');
+  texto.className = 'texto';
+  texto.textContent = `${e.nome} encomendou ${e.quantidade} de ${e.produto} em ${e.data}.`;
+
+  descricao.appendChild(numero);
+  descricao.appendChild(texto);
+
+  if (e.telemovel) {
+    const telemovel = document.createElement('div');
+    telemovel.className = 'telemovel';
+    telemovel.innerHTML = `📞 <a href="tel:${e.telemovel}">${e.telemovel}</a>`;
+    descricao.appendChild(telemovel);
   }
-  const dataFinalizacao = new Date().toISOString().slice(0, 19).replace('T', ' ');
-  try {
-    const resp = await fetch(`/finalizar-encomenda/${encodeURIComponent(numero)}`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ valorAngariado: valor, dataFinalizacao })
-    });
-    if (!resp.ok) throw new Error('Erro ao finalizar encomenda');
-    await carregarEncomendas();
-  } catch (e) {
-    alert('Erro: ' + e.message);
+
+  if (finalizada && e.dataFinalizacao && e.valorAngariado !== undefined) {
+    const horaMin = e.dataFinalizacao.slice(11, 16);
+    const data = e.dataFinalizacao.slice(0, 10);
+    const finalInfo = document.createElement('span');
+    finalInfo.className = 'valor';
+    finalInfo.textContent = `Finalizada a ${data} ${horaMin} - Valor: ${Number(e.valorAngariado).toFixed(2)}€`;
+    descricao.appendChild(finalInfo);
   }
+
+  const botoes = document.createElement('div');
+  botoes.className = 'botoes';
+
+  if (finalizada) {
+    const btnApagar = document.createElement('button');
+    btnApagar.className = 'apagar';
+    btnApagar.textContent = '🗑️';
+    btnApagar.title = 'Apagar';
+    btnApagar.onclick = () => apagarEncomenda(e.numero, true);
+    botoes.appendChild(btnApagar);
+  } else {
+    const btnFinalizar = document.createElement('button');
+    btnFinalizar.className = 'finalizar';
+    btnFinalizar.textContent = '✅';
+    btnFinalizar.title = 'Finalizar';
+    btnFinalizar.onclick = () => finalizarEncomenda(e.numero);
+    botoes.appendChild(btnFinalizar);
+
+    const btnApagar = document.createElement('button');
+    btnApagar.className = 'apagar';
+    btnApagar.textContent = '🗑️';
+    btnApagar.title = 'Apagar';
+    btnApagar.onclick = () => apagarEncomenda(e.numero, false);
+    botoes.appendChild(btnApagar);
+  }
+
+  li.appendChild(descricao);
+  li.appendChild(botoes);
+  return li;
 }
 
-async function apagarEncomenda(numero, finalizada) {
-  if (!confirm('Tens a certeza que queres apagar esta encomenda? Esta ação não pode ser revertida.')) return;
-  try {
-    const url = `/apagar-encomenda/${encodeURIComponent(numero)}?finalizada=${finalizada ? '1' : '0'}`;
-    const resp = await fetch(url, { method: 'DELETE' });
-    if (!resp.ok) throw new Error('Erro ao apagar encomenda');
-    await carregarEncomendas();
-  } catch (e) {
-    alert('Erro: ' + e.message);
+  // Variável global para guardar o número da encomenda a finalizar
+  let encomendaParaFinalizar = null;
+
+  // Função que mostra o modal e prepara para inserir o valor
+  function mostrarModalFinalizar(numero) {
+    encomendaParaFinalizar = numero;
+    document.getElementById('inputValorFinalizar').value = '';
+    document.getElementById('modalFinalizar').style.display = 'flex';
+    document.getElementById('inputValorFinalizar').focus();
   }
-}
+
+  // Função que esconde o modal
+  function esconderModalFinalizar() {
+    encomendaParaFinalizar = null;
+    document.getElementById('modalFinalizar').style.display = 'none';
+  }
+
+  // Substitui a tua função original
+  async function finalizarEncomenda(numero) {
+    mostrarModalFinalizar(numero);
+  }
+
+  // Botão Cancelar fecha o modal sem ação
+  document.getElementById('btnCancelarModal').onclick = () => {
+    esconderModalFinalizar();
+  };
+
+  // Botão OK valida e envia o valor para o servidor
+  document.getElementById('btnOkModal').onclick = async () => {
+    const valorStr = document.getElementById('inputValorFinalizar').value.trim();
+    const valor = parseFloat(valorStr.replace(',', '.'));
+    if (isNaN(valor) || valor < 0) {
+      alert('Por favor, introduz um valor válido.');
+      return;
+    }
+    const dataFinalizacao = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    try {
+      const resp = await fetch(`/finalizar-encomenda/${encodeURIComponent(encomendaParaFinalizar)}`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ valorAngariado: valor, dataFinalizacao })
+      });
+      if (!resp.ok) throw new Error('Erro ao finalizar encomenda');
+      esconderModalFinalizar();
+      await carregarEncomendas();
+    } catch (e) {
+      alert('Erro: ' + e.message);
+    }
+  };
+
+
+  // Variável global para guardar o número da encomenda a apagar
+  let encomendaParaApagar = null;
+
+  // Função para mostrar o modal de apagar
+  function mostrarModalApagar(numero) {
+    encomendaParaApagar = numero;
+    document.getElementById('modalApagar').style.display = 'flex';
+  }
+
+  // Função para esconder o modal
+  function esconderModalApagar() {
+    encomendaParaApagar = null;
+    document.getElementById('modalApagar').style.display = 'none';
+  }
+
+  // A função que era async apagarEncomenda passa a só mostrar o modal
+  function apagarEncomenda(numero) {
+    mostrarModalApagar(numero);
+  }
+
+  // Botão Cancelar fecha o modal
+  document.getElementById('btnCancelarApagar').onclick = () => {
+    esconderModalApagar();
+  };
+
+  // Botão Apagar confirma e envia o pedido para o servidor
+  document.getElementById('btnOkApagar').onclick = async () => {
+    try {
+      const resp = await fetch('/apagar-encomenda', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ numero: encomendaParaApagar })
+      });
+      if (!resp.ok) throw new Error(await resp.text());
+      esconderModalApagar();
+      await carregarEncomendas();
+    } catch (e) {
+      alert('Erro: ' + e.message);
+    }
+  };
+
 
 window.onload = carregarEncomendas;
 </script>

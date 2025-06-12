@@ -1,109 +1,119 @@
 body {
-  margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background: url('https://i.imgur.com/2zL6Afv.jpg') no-repeat center center fixed;
-  background-size: cover;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+margin: 0;
+padding: 0;
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+position: relative;
+width: 100%;
+height: 100vh;
+background: url('/a.jpg') no-repeat center;
+background-size: 100% 100%; /* mostra a imagem inteira sem zoom /
+background-color: black;  / cor de fundo para zonas não cobertas */
+overflow: hidden;
+backdrop-filter: blur(1px);
+-webkit-backdrop-filter: blur(1px);
+height: 100vh;
+display: flex;
+justify-content: center;
+align-items: center;
 }
 
 .container {
-  text-align: center;
-  color: white;
-  width: 90%;
-  max-width: 300px;
+text-align: center;
+color: white;
+width: 90%;
+max-width: 300px;
 }
 
 .title {
-  font-size: 22px;
-  margin-bottom: 20px;
+
+font-size: 28px;      
+font-weight: bold;    
+margin-bottom: 70px;
+  color: white;
+}
 }
 
 .erro-msg {
-  background-color: rgba(255, 0, 0, 0.2);
-  border: 1px solid red;
-  padding: 10px;
-  margin-bottom: 20px;
-  border-radius: 8px;
-  color: white;
-  font-size: 14px;
+background-color: rgba(255, 0, 0, 0.2);
+border: 1px solid red;
+padding: 10px;
+margin-bottom: 20px;
+border-radius: 8px;
+color: white;
+font-size: 14px;
 }
 
 .dots {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 30px;
+display: flex;
+justify-content: center;
+gap: 12px;
+margin-bottom: 30px;
 }
 
 .dot {
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  border: 2px solid white;
-  background-color: transparent;
-  transition: background-color 0.3s;
+width: 15px;
+height: 15px;
+border-radius: 50%;
+border: 2px solid white;
+background-color: transparent;
+transition: background-color 0.3s;
 }
 
 .dot.filled {
-  background-color: white;
+background-color: white;
 }
 
 .keypad {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-  justify-items: center;
-  margin-bottom: 30px;
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 15px;
+justify-items: center;
+margin-bottom: 30px;
 }
 
 .btn {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  font-size: 20px;
-  color: white;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  cursor: pointer;
-  transition: background-color 0.2s;
+width: 60px;
+height: 60px;
+border-radius: 50%;
+font-size: 20px;
+color: white;
+background: rgba(255, 255, 255, 0.4);
+border: 1px solid rgba(255, 255, 255, 0.5);
+backdrop-filter: blur(4px);
+-webkit-backdrop-filter: blur(4px);
+cursor: pointer;
+transition: background-color 0.2s;
 }
 
 .btn:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+background-color: rgba(255, 255, 255, 0.5);
 }
 
 .bottom-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 14px;
-  padding: 0 10px;
-  color: white;
+display: flex;
+justify-content: space-between;
+font-size: 14px;
+padding: 0 10px;
+color: white;
 }
 .erro-popup {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%) scale(0.9);
-  background-color: rgba(255, 0, 0, 0.8);
-  color: white;
-  padding: 10px 20px;
-  border-radius: 20px;
-  font-size: 14px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  z-index: 999;
+position: fixed;
+top: 400px;
+left: 50%;
+transform: translateX(-50%) scale(0.9);
+background-color: rgba(255, 0, 0, 0.8);
+color: white;
+padding: 10px 20px;
+border-radius: 20px;
+font-size: 14px;
+opacity: 0;
+pointer-events: none;
+transition: opacity 0.3s ease, transform 0.3s ease;
+z-index: 999;
 }
 
 .erro-popup.mostrar {
-  opacity: 1;
-  transform: translateX(-50%) scale(1);
+opacity: 1;
+transform: translateX(-50%) scale(1);
 }
+

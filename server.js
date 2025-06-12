@@ -48,6 +48,27 @@ db.run(`
     valorAngariado REAL
   )
 `);
+// Criar tabela de saídas
+db.run(`CREATE TABLE IF NOT EXISTS saidas (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  produto TEXT,
+  fornecedor TEXT,
+  valor REAL,
+  data TEXT
+)`);
+
+
+// Criar a tabela se não existir
+db.run(`
+  CREATE TABLE IF NOT EXISTS entradas (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    descricao TEXT,
+    data TEXT,
+    valor REAL
+  )
+`);
+
+
 
 // Função para gerar número de encomenda
 function gerarNumero(callback) {
@@ -129,51 +150,70 @@ app.post('/finalizar-encomenda/:numero', (req, res) => {
     }
 
     // Copiar para tabela encomendas_finalizadas
+  // Copiar para tabela encomendas_finalizadas
+  db.run(`
+    INSERT INTO encomendas_finalizadas (numero, nome, telemovel, produto, quantidade, data, dataFinalizacao, valorAngariado)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `,
+  [row.numero, row.nome, row.telemovel, row.produto, row.quantidade, row.data, dataFinalizacao, valorAngariado],
+  function (err2) {
+    if (err2) {
+      console.error(err2);
+      return res.status(500).send("Erro ao copiar para finalizadas");
+    }
+
+    // ➕ Inserir também na tabela 'entradas'
+    const descricao = `${row.nome} encomendou ${row.quantidade} de ${row.produto}`;
+    const dataEntrada = dataFinalizacao.split(" ")[0]; // Apenas a data, sem horas
+
     db.run(`
-      INSERT INTO encomendas_finalizadas (numero, nome, telemovel, produto, quantidade, data, dataFinalizacao, valorAngariado)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `,
-    [row.numero, row.nome, row.telemovel, row.produto, row.quantidade, row.data, dataFinalizacao, valorAngariado],
-    function (err2) {
-      if (err2) {
-        console.error(err2);
-        return res.status(500).send("Erro ao copiar para finalizadas");
+      INSERT INTO entradas (descricao, data, valor)
+      VALUES (?, ?, ?)
+    `, [descricao, dataEntrada, valorAngariado], function (err4) {
+      if (err4) {
+        console.error(err4);
+        return res.status(500).send("Erro ao adicionar entrada");
       }
 
-      // Apagar da tabela original
+      // ✅ Apagar da tabela original
       db.run("DELETE FROM encomendas WHERE numero = ?", [numero], function (err3) {
         if (err3) return res.status(500).send("Erro ao apagar encomenda original");
         res.sendStatus(200);
       });
     });
   });
+     });
 });
 
-// Apagar encomenda ativa
+// Apagar encomenda (ativa ou finalizada) por número
 app.post('/apagar-encomenda', (req, res) => {
-  const { id } = req.body;
-  if (!id) return res.status(400).send('ID da encomenda obrigatório');
+  const { numero } = req.body;
+  if (!numero) return res.status(400).send('Número da encomenda obrigatório');
 
-  db.run(`DELETE FROM encomendas WHERE id = ?`, [id], function (err) {
+  // Primeiro tenta apagar da tabela de encomendas ativas
+  db.run(`DELETE FROM encomendas WHERE numero = ?`, [numero], function (err) {
     if (err) {
-      console.error(err);
+      console.error('Erro ao apagar da tabela encomendas:', err);
       return res.status(500).send('Erro ao apagar encomenda');
     }
-    res.status(200).send('Encomenda apagada com sucesso');
-  });
-});
 
-// Apagar encomenda finalizada
-app.post('/apagar-encomenda-finalizada', (req, res) => {
-  const { id } = req.body;
-  if (!id) return res.status(400).send('ID da encomenda finalizada obrigatório');
-
-  db.run(`DELETE FROM encomendas_finalizadas WHERE id = ?`, [id], function (err) {
-    if (err) {
-      console.error(err);
-      return res.status(500).send('Erro ao apagar encomenda finalizada');
+    if (this.changes > 0) {
+      return res.status(200).send('Encomenda ativa apagada com sucesso');
     }
-    res.status(200).send('Encomenda finalizada apagada com sucesso');
+
+    // Se não encontrou na tabela encomendas, tenta nas finalizadas
+    db.run(`DELETE FROM encomendas_finalizadas WHERE numero = ?`, [numero], function (err2) {
+      if (err2) {
+        console.error('Erro ao apagar da tabela encomendas_finalizadas:', err2);
+        return res.status(500).send('Erro ao apagar encomenda finalizada');
+      }
+
+      if (this.changes > 0) {
+        return res.status(200).send('Encomenda finalizada apagada com sucesso');
+      } else {
+        return res.status(404).send('Encomenda não encontrada');
+      }
+    });
   });
 });
 
@@ -211,6 +251,131 @@ app.get('/encomendas.html', protegerPagina, (req, res) => {
 app.get('/verenc.html', protegerPagina, (req, res) => {
   res.sendFile(path.join(__dirname, 'privado', 'verenc.html'));
 });
+
+app.get('/saidas.html', protegerPagina, (req, res) => {
+  res.sendFile(path.join(__dirname, 'privado', 'saidas.html'));
+});
+
+app.get('/entradas.html', protegerPagina, (req, res) => {
+  res.sendFile(path.join(__dirname, 'privado', 'entradas.html'));
+});
+
+
+app.get("/saidas", (req, res) => {
+  db.all("SELECT * FROM saidas", (err, rows) => {
+    if (err) {
+      res.status(500).json({ erro: err.message });
+    } else {
+      res.json(rows);
+    }
+  });
+});
+
+app.post("/saidas", (req, res) => {
+  const { produto, fornecedor, valor, data } = req.body;
+  if (!produto || !fornecedor || !valor || !data) {
+    return res.status(400).json({ erro: "Campos em falta" });
+  }
+
+  const sql = `INSERT INTO saidas (produto, fornecedor, valor, data) VALUES (?, ?, ?, ?)`;
+  db.run(sql, [produto, fornecedor, valor, data], function(err) {
+    if (err) {
+      res.status(500).json({ erro: err.message });
+    } else {
+      res.status(200).json({ id: this.lastID });
+    }
+  });
+});
+
+app.delete("/saidas/:id", (req, res) => {
+  const id = req.params.id;
+  db.run("DELETE FROM saidas WHERE id = ?", id, function(err) {
+    if (err) {
+      res.status(500).json({ erro: err.message });
+    } else {
+      res.status(200).json({ mensagem: "Compra eliminada" });
+    }
+  });
+});
+
+function mesParaNumero(mes) {
+  const meses = {
+    'janeiro': '01', 'fevereiro': '02', 'março': '03',
+    'abril': '04', 'maio': '05', 'junho': '06',
+    'julho': '07', 'agosto': '08', 'setembro': '09',
+    'outubro': '10', 'novembro': '11', 'dezembro': '12'
+  };
+  return meses[mes.toLowerCase()] || '01';
+}
+
+
+
+
+
+// Inserir nova entrada
+app.post('/entradas', (req, res) => {
+  const { descricao, data, valor } = req.body;
+  db.run(
+    `INSERT INTO entradas (descricao, data, valor) VALUES (?, ?, ?)`,
+    [descricao, data, valor],
+    (err) => {
+      if (err) return res.status(500).json({ erro: err.message });
+      res.json({ sucesso: true });
+    }
+  );
+});
+
+// Obter todas as entradas agrupadas por mês
+app.get('/entradas', (req, res) => {
+  db.all(`SELECT * FROM entradas ORDER BY data DESC`, (err, rows) => {
+    if (err) return res.status(500).json({ erro: err.message });
+
+    const agrupado = {};
+    for (const row of rows) {
+      const [ano, mes] = row.data.split('-');
+      const chave = `${mesNome(mes)} de ${ano}`;
+
+      if (!agrupado[chave]) agrupado[chave] = { entradas: [], total: 0 };
+
+      agrupado[chave].entradas.push(row);
+      agrupado[chave].total += row.valor;
+    }
+
+    res.json(agrupado);
+  });
+});
+
+function mesNome(m) {
+  const meses = [
+    'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+  ];
+  return meses[parseInt(m) - 1];
+}
+
+// Apagar uma entrada
+app.delete('/entradas/:id', (req, res) => {
+  const id = req.params.id;
+  db.run(`DELETE FROM entradas WHERE id = ?`, [id], function (err) {
+    if (err) return res.status(500).json({ erro: err.message });
+    res.json({ sucesso: true });
+  });
+});
+
+app.put('/entradas/:id', (req, res) => {
+  const id = req.params.id;
+  const { descricao, data, valor } = req.body;
+
+  db.run(
+    `UPDATE entradas SET descricao = ?, data = ?, valor = ? WHERE id = ?`,
+    [descricao, data, valor, id],
+    function (err) {
+      if (err) return res.status(500).send("Erro ao atualizar entrada.");
+      res.sendStatus(200);
+    }
+  );
+});
+
 
 // Arranque do servidor
 const PORT = process.env.PORT || 3000;

@@ -25,21 +25,20 @@
         padding: 20px 0;
         background: #f5f5f5;
         border-bottom: 1px solid #ddd;
-        text-align: center;
-        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
       }
 
       header h1 {
         margin: 0;
         font-size: 28px;
+        text-align: center;
+        flex: 1;
       }
 
       nav {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        display: flex;
-        gap: 10px;
+        position: static;
       }
 
       nav button {
@@ -110,7 +109,28 @@
         background-color: #388E3C;
       }
 
-      
+      /* Botão Listagem fora do form */
+      .btn-listagem-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+      }
+
+      .btn-listagem-container button {
+        background-color: #f0f0f0;
+        color: #000;
+        border: none;
+        cursor: pointer;
+        padding: 12px 20px;
+        border-radius: 6px;
+        font-size: 16px;
+        transition: background 0.3s;
+        white-space: nowrap;
+      }
+
+      .btn-listagem-container button:hover {
+        background-color: #d0d0d0;
+      }
 
       .popup {
         position: fixed;
@@ -133,6 +153,42 @@
         }
       }
 
+      @media (max-width: 480px) {
+        nav {
+          position: static;
+          margin-top: 15px;
+          justify-content: center;
+          flex-wrap: wrap;
+        }
+
+        nav button {
+          flex: 1 1 auto;
+          min-width: 120px;
+          text-align: center;
+        }
+      }
+          .separador {
+            border: none;
+            border-top: 1px solid #ccc;
+            margin: 40px 0;
+            width: 100%;
+            max-width: 400px; /* opcional, para limitar o tamanho */
+            margin-left: auto;
+            margin-right: auto;
+          }
+      .btn-listagem {
+        padding: 14px 28px; /* aumenta o padding para ficar maior */
+        font-size: 18px;    /* aumenta o tamanho do texto */
+        min-width: 200px;   /* largura mínima maior */
+        border-radius: 8px; /* bordas um pouco mais arredondadas */
+      }
+      .btn-home {
+        padding: 6px 10px;  /* menos espaço à volta */
+        min-width: auto;    /* sem largura mínima */
+        width: auto;        /* ajusta ao conteúdo */
+        font-size: 18px;    /* mantém o tamanho do ícone legível */
+        border-radius: 6px;
+      }
       @media (min-width: 768px) {
         body {
           padding: 20px;
@@ -145,8 +201,7 @@
     <header>
       <h1>Nova Encomenda</h1>
       <nav>
-        <button onclick="location.href='verenc.html'">📝 Listagem</button>
-        <button onclick="location.href='home.html'">🏠</button>
+        <button onclick="location.href='home.html'" class="btn-home">🏠</button>
       </nav>
     </header>
 
@@ -170,6 +225,11 @@
         <input type="date" name="data" id="dataInput" required />
         <button type="submit">Adicionar Encomenda</button>
       </form>
+      <hr class="separador" />
+      <div class="btn-listagem-container">
+        <button type="button" class="btn-listagem" onclick="location.href='verenc.html'">📝 Listagem</button>
+
+      </div>
     </main>
 
     <script>

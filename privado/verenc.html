@@ -21,15 +21,46 @@
       padding: 20px 0;
       background: #f5f5f5;
       border-bottom: 1px solid #ddd;
-      text-align: center;
+      text-align: center; /* título centrado */
       position: relative;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between; /* título ao centro e botões à direita */
+      align-items: center;
+      gap: 15px;
+    }
 
+    header h1 {
+      flex: 1; /* ocupa espaço para centrar */
+      font-size: 36px; /* texto maior */
+      margin: 0;
+      text-align: center; /* texto centrado */
+      align-self: center;
     }
 
     nav {
-      position: absolute;
-      top: 20px;
-      right: 20px;
+      position: static;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: flex-end;
+      min-width: 140px; /* ligeiramente maior */
+    }
+
+    nav button {
+      padding: 10px 18px; /* botões maiores */
+      font-size: 18px; /* texto dos botões maior */
+      border-radius: 6px;
+      background-color: #f0f0f0;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    nav button:hover {
+      background-color: #d0d0d0;
     }
 
     .filtros {
@@ -67,6 +98,7 @@
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
+
     .conteudo {
       margin-top: 30px; /* mais espaço abaixo do header */
       max-width: 700px;
@@ -126,7 +158,6 @@
       background-color: #f0f0f0;
       transition: background 0.2s;
     }
-    
 
     button:hover {
       background-color: #d0d0d0;
@@ -138,11 +169,41 @@
       font-size: 28px;
     }
 
+    @media (max-width: 600px) {
+      header {
+        flex-direction: row; /* mantém horizontal */
+        justify-content: space-between; /* título à esquerda, botões à direita */
+        align-items: center;
+        text-align: center;
+      }
+      header h1 {
+        font-size: 28px;
+        margin: 0;
+        flex: 1;
+        text-align: center;
+      }
+      nav {
+        flex-direction: column; /* botões empilhados */
+        align-items: flex-end;
+        gap: 8px;
+        min-width: 120px;
+        width: auto;
+      }
+      nav button {
+        font-size: 16px;
+        padding: 10px 16px;
+        width: 100%;
+        max-width: 100px;
+      }
+    }
+
+
     @media (min-width: 768px) {
       body {
         padding: 20px;
       }
     }
+
   </style>
 </head>
 <body>
@@ -239,134 +300,145 @@ function formatarMesAno(data) {
   return `${meses[parseInt(mes)-1]} de ${ano}`;
 }
 
-async function carregarEncomendas() {
-  try {
-    const resp = await fetch('/api/encomendas');
-    if (!resp.ok) throw new Error('Erro a obter dados');
-    const encomendas = await resp.json();
+  async function carregarEncomendas() {
+    try {
+      const resp = await fetch('/api/encomendas');
+      if (!resp.ok) throw new Error('Erro a obter dados');
+      const encomendas = await resp.json();
 
-    const filtroNome = normalizar(document.getElementById("filtroNome").value);
-    const filtroMes = document.getElementById("filtroMes").value;
+      const filtroNome = normalizar(document.getElementById("filtroNome").value);
+      const filtroMes = document.getElementById("filtroMes").value;
 
-    const listaAtivas = document.getElementById('listaAtivas');
-    const listaFinalizadas = document.getElementById('listaFinalizadas');
+      const listaAtivas = document.getElementById('listaAtivas');
+      const listaFinalizadas = document.getElementById('listaFinalizadas');
 
-    listaAtivas.innerHTML = '';
-    listaFinalizadas.innerHTML = '';
+      listaAtivas.innerHTML = '';
+      listaFinalizadas.innerHTML = '';
 
-    const gruposAtivas = {};
-    const finalizadas = [];
-    const mesesUnicos = new Set();
+      const gruposAtivas = {};
+      const finalizadas = [];
+      const mesesUnicos = new Set();
 
-    encomendas.forEach(e => {
-      if (filtroNome && !normalizar(e.nome).includes(filtroNome)) return;
+      encomendas.forEach(e => {
+        if (filtroNome && !normalizar(e.nome).includes(filtroNome)) return;
 
-      const mes = e.data.slice(0, 7); // yyyy-mm
-      if (filtroMes && mes !== filtroMes) return;
-      mesesUnicos.add(mes);
+        const mes = (e.data || '').slice(0, 7);
+        if (filtroMes && mes !== filtroMes) return;
+        mesesUnicos.add(mes);
 
-      if (e.finalizada) {
-        finalizadas.push(e);
-      } else {
-        if (!gruposAtivas[mes]) gruposAtivas[mes] = [];
-        gruposAtivas[mes].push(e);
-      }
-    });
-
-    const filtroMesSelect = document.getElementById("filtroMes");
-    filtroMesSelect.innerHTML = '<option value="">Mês</option>';
-    Array.from(mesesUnicos)
-      .sort((a, b) => b.localeCompare(a))
-      .forEach(mes => {
-        const opt = document.createElement("option");
-        opt.value = mes;
-        opt.textContent = formatarMesAno(mes);
-        filtroMesSelect.appendChild(opt);
+        if (e.finalizada) {
+          finalizadas.push(e);
+        } else {
+          if (!gruposAtivas[mes]) gruposAtivas[mes] = [];
+          gruposAtivas[mes].push(e);
+        }
       });
 
-    Object.keys(gruposAtivas).sort((a, b) => b.localeCompare(a)).forEach(mes => {
-      gruposAtivas[mes].sort((a, b) => a.data.localeCompare(b.data)).forEach(e => {
-        const li = criarItemEncomenda(e, false);
-        listaAtivas.appendChild(li);
-      });
-    });
+      const filtroMesSelect = document.getElementById("filtroMes");
+      filtroMesSelect.innerHTML = '<option value="">Mês</option>';
+      Array.from(mesesUnicos)
+        .sort((a, b) => b.localeCompare(a))
+        .forEach(mes => {
+          const opt = document.createElement("option");
+          opt.value = mes;
+          opt.textContent = formatarMesAno(mes);
+          filtroMesSelect.appendChild(opt);
+        });
 
-    finalizadas
-      .sort((a, b) => b.dataFinalizacao.localeCompare(a.dataFinalizacao))
-      .forEach(e => {
-        const li = criarItemEncomenda(e, true);
-        listaFinalizadas.appendChild(li);
-      });
+      Object.keys(gruposAtivas)
+        .sort((a, b) => b.localeCompare(a))
+        .forEach(mes => {
+          gruposAtivas[mes]
+            .sort((a, b) => (a.data || '').localeCompare(b.data || ''))
+            .forEach(e => {
+              const li = criarItemEncomenda(e, false);
+              listaAtivas.appendChild(li);
+            });
+        });
 
-  } catch (error) {
-    alert('Erro ao carregar encomendas: ' + error.message);
-  }
-}
+      finalizadas
+        .sort((a, b) => (b.id || 0) - (a.id || 0)) // Ordenar por ID descrescente
+        .forEach(e => {
+          const li = criarItemEncomenda(e, true);
+          listaFinalizadas.appendChild(li);
+        });
 
-function criarItemEncomenda(e, finalizada) {
-  const li = document.createElement('li');
-  if (finalizada) li.classList.add('finalizada');
-
-  const descricao = document.createElement('div');
-  descricao.className = 'descricao';
-
-  const numero = document.createElement('div');
-  numero.className = 'numero';
-  numero.textContent = e.numero;
-
-  const texto = document.createElement('div');
-  texto.className = 'texto';
-  texto.textContent = `${e.nome} encomendou ${e.quantidade} de ${e.produto} em ${e.data}.`;
-
-  descricao.appendChild(numero);
-  descricao.appendChild(texto);
-
-  if (e.telemovel) {
-    const telemovel = document.createElement('div');
-    telemovel.className = 'telemovel';
-    telemovel.innerHTML = `📞 <a href="tel:${e.telemovel}">${e.telemovel}</a>`;
-    descricao.appendChild(telemovel);
+    } catch (error) {
+      alert('Erro ao carregar encomendas: ' + error.message);
+    }
   }
 
-  if (finalizada && e.dataFinalizacao && e.valorAngariado !== undefined) {
-    const horaMin = e.dataFinalizacao.slice(11, 16);
-    const data = e.dataFinalizacao.slice(0, 10);
-    const finalInfo = document.createElement('span');
-    finalInfo.className = 'valor';
-    finalInfo.textContent = `Finalizada a ${data} ${horaMin} - Valor: ${Number(e.valorAngariado).toFixed(2)}€`;
-    descricao.appendChild(finalInfo);
+
+
+
+  function criarItemEncomenda(e, finalizada) {
+    const li = document.createElement('li');
+    if (finalizada) li.classList.add('finalizada');
+
+    const descricao = document.createElement('div');
+    descricao.className = 'descricao';
+
+    const numero = document.createElement('div');
+    numero.className = 'numero';
+    numero.textContent = e.numero;
+
+    const texto = document.createElement('div');
+    texto.className = 'texto';
+    texto.textContent = `${e.nome} encomendou ${e.quantidade} de ${e.produto} em ${e.data}.`;
+
+    descricao.appendChild(numero);
+    descricao.appendChild(texto);
+
+    if (e.telemovel) {
+      const telemovel = document.createElement('div');
+      telemovel.className = 'telemovel';
+      telemovel.innerHTML = `📞 <a href="tel:${e.telemovel}">${e.telemovel}</a>`;
+      descricao.appendChild(telemovel);
+    }
+
+    // Mostra a data de finalização e o valor angariado
+    if (finalizada && e.dataFinalizacao && e.valorAngariado !== undefined) {
+      const horaMin = e.dataFinalizacao.slice(11, 16);
+      const data = e.dataFinalizacao.slice(0, 10);
+
+      const finalInfo = document.createElement('div');
+      finalInfo.className = 'valor';
+      finalInfo.textContent = `Finalizada a ${data} ${horaMin} — Valor: ${Number(e.valorAngariado).toFixed(2)}€`;
+
+      descricao.appendChild(finalInfo);
+    }
+
+    const botoes = document.createElement('div');
+    botoes.className = 'botoes';
+
+    if (finalizada) {
+      const btnApagar = document.createElement('button');
+      btnApagar.className = 'apagar';
+      btnApagar.textContent = '🗑️';
+      btnApagar.title = 'Apagar';
+      btnApagar.onclick = () => apagarEncomenda(e.numero, true);
+      botoes.appendChild(btnApagar);
+    } else {
+      const btnFinalizar = document.createElement('button');
+      btnFinalizar.className = 'finalizar';
+      btnFinalizar.textContent = '✅';
+      btnFinalizar.title = 'Finalizar';
+      btnFinalizar.onclick = () => finalizarEncomenda(e.numero);
+      botoes.appendChild(btnFinalizar);
+
+      const btnApagar = document.createElement('button');
+      btnApagar.className = 'apagar';
+      btnApagar.textContent = '🗑️';
+      btnApagar.title = 'Apagar';
+      btnApagar.onclick = () => apagarEncomenda(e.numero, false);
+      botoes.appendChild(btnApagar);
+    }
+
+    li.appendChild(descricao);
+    li.appendChild(botoes);
+    return li;
   }
 
-  const botoes = document.createElement('div');
-  botoes.className = 'botoes';
-
-  if (finalizada) {
-    const btnApagar = document.createElement('button');
-    btnApagar.className = 'apagar';
-    btnApagar.textContent = '🗑️';
-    btnApagar.title = 'Apagar';
-    btnApagar.onclick = () => apagarEncomenda(e.numero, true);
-    botoes.appendChild(btnApagar);
-  } else {
-    const btnFinalizar = document.createElement('button');
-    btnFinalizar.className = 'finalizar';
-    btnFinalizar.textContent = '✅';
-    btnFinalizar.title = 'Finalizar';
-    btnFinalizar.onclick = () => finalizarEncomenda(e.numero);
-    botoes.appendChild(btnFinalizar);
-
-    const btnApagar = document.createElement('button');
-    btnApagar.className = 'apagar';
-    btnApagar.textContent = '🗑️';
-    btnApagar.title = 'Apagar';
-    btnApagar.onclick = () => apagarEncomenda(e.numero, false);
-    botoes.appendChild(btnApagar);
-  }
-
-  li.appendChild(descricao);
-  li.appendChild(botoes);
-  return li;
-}
 
   // Variável global para guardar o número da encomenda a finalizar
   let encomendaParaFinalizar = null;
@@ -403,12 +475,17 @@ function criarItemEncomenda(e, finalizada) {
       alert('Por favor, introduz um valor válido.');
       return;
     }
-    const dataFinalizacao = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+    const datafinalizacao = new Date().toISOString().slice(0, 19).replace('T', ' '); // formato correto
+
     try {
       const resp = await fetch(`/finalizar-encomenda/${encodeURIComponent(encomendaParaFinalizar)}`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ valorAngariado: valor, dataFinalizacao })
+        body: JSON.stringify({
+          valorAngariado: valor,
+          dataFinalizacao: datafinalizacao
+        })
       });
       if (!resp.ok) throw new Error('Erro ao finalizar encomenda');
       esconderModalFinalizar();

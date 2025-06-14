@@ -1,217 +1,101 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pt">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Compras</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    header {
-      margin-top: 30px;
-      padding: 20px 0;
-      background: #f5f5f5;
-      border-bottom: 1px solid #ddd;
-      text-align: center;
-      position: relative;
-       
-    }
-
-
-    header h1 {
-      text-align: center;
-      margin: 0;
-      font-size: 28px;
-    }
-    
-    body {
-      font-family: "Segoe UI", sans-serif;
-      margin: 0;
-      padding: 0 10px;
-      max-width: 700px;
-      
-      margin-inline: auto;
-      background: #f5f5f5;
-      font-size: 16px;
-    }
-
-   
-    nav {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-    }
-
-    #homeBtn {
-      padding: 6px 10px;
-      font-size: 15px;
-      border: none;
-      border-radius: 6px;
-      background-color: #f0f0f0;
-      transition: background 0.2s;
-    }
-
-    .conteudo {
-      margin-top: 30px; /* mais espaço abaixo do header */
-      max-width: 700px;
-      margin-left: auto;
-      margin-right: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    form {
-      margin-top: 20px;
-    }
-
-    h1 {
-      margin-bottom: 10px;
-    }
-
-    form, .filtros {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    input, button, select {
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-
-    button {
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-    }
-    button:hover{
-      background-color: #388E3C;
-    }
-
-    .filtros {
-      flex-direction: row;
-      gap: 5px;
-      flex-wrap: wrap;
-    }
-
-    .filtros input,
-    .filtros select {
-      flex: 1;
-      min-width: 120px;
-      font-size: 14px;
-    }
-
-    .mes {
-      font-weight: bold;
-      margin-top: 25px;
-      margin-bottom: 12px;
-      font-size: 20px;
-    }
-
-    .compra {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px dashed #ccc;
-      padding: 6px 0;
-      gap: 20px;
-    }
-
-    .descricao {
-      flex-grow: 1;
-      word-break: break-word;
-    }
-
-    .valor-apagar {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      white-space: nowrap;
-    }
-
-    .total {
-      display: flex;
-      justify-content: space-between;
-      font-size: 20px;
-      font-weight: bold;
-      margin-top: 10px;
-      margin-bottom: 18px;
-    }
-
-    #verMaisBtn {
-      margin: 30px auto;
-      display: block;
-      padding: 10px 20px;
-      border-radius: 8px;
-      border: none;
-      background: #4CAF50;
-      color: white;
-      font-size: 16px;
-    }
-    #verMaisBtn:hover{
-      background-color: #388E3C;
-    }
-
-    .tituloMaisAntigas {
-      font-size: 26px;
-      font-weight: bold;
-      margin-top: 40px;
-      margin-bottom: 10px;
-      text-align: center;
-      color: #333;
-    }
-
-    .btnApagar {
-      background-color: #eeeeee;
-      color: black;
-      border: none;
-      border-radius: 8px;
-      padding: 4px 8px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-  </style>
-
-
-
+  <title>Compras - Gestão TBA-FR</title>
+  <link rel="stylesheet" href="../public/styles/main.css">
 </head>
 <body>
-  <header>
-    <h1>Compras</h1>
-    <nav>
-      <button id="homeBtn" onclick="window.location.href='home.html'">🏠</button>
-    </nav>
-  </header>
-  
+  <div class="app-container">
+    <header class="app-header">
+      <div class="header-content">
+        <a href="home.html" class="logo">
+          <div class="logo-icon">🏠</div>
+          <span>Gestão TBA-FR</span>
+        </a>
+        <nav class="nav-menu">
+          <a href="home.html" class="nav-link">
+            <span>🏠</span>
+            <span>Home</span>
+          </a>
+          <a href="saidas.html" class="nav-link active">
+            <span>🛒</span>
+            <span>Compras</span>
+          </a>
+        </nav>
+      </div>
+    </header>
 
-  <div class="conteudo">
-    
-    <form id="formSaida">
-      <input type="text" id="produto" placeholder="Produto" required />
-      <input type="text" id="fornecedor" placeholder="Fornecedor" required />
-      <input type="number" id="valor" placeholder="Valor (€)" step="0.01" required />
-      <input type="date" id="data" required />
-      <button type="submit">Adicionar Compra</button>
-    </form>
+    <main class="main-content">
+      <div class="section-header">
+        <h1 class="section-title">
+          🛒 Gestão de Compras
+        </h1>
+      </div>
 
-    <div class="filtros">
-      <input type="text" id="filtroProduto" placeholder="Filtrar por produto">
-      <select id="filtroMes">
-        <option value="">Filtrar por Mês</option>
-      </select>
-    </div>
+      <div class="card mb-6">
+        <div class="card-header">
+          <h2 class="card-title">Nova Compra</h2>
+          <p class="card-subtitle">Registar uma nova compra a fornecedores</p>
+        </div>
+        <div class="card-content">
+          <form id="formSaida">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="form-group">
+                <label class="form-label" for="produto">Produto</label>
+                <input type="text" id="produto" class="form-input" placeholder="Nome do produto" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="fornecedor">Fornecedor</label>
+                <input type="text" id="fornecedor" class="form-input" placeholder="Nome do fornecedor" required />
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="form-group">
+                <label class="form-label" for="valor">Valor (€)</label>
+                <input type="number" id="valor" class="form-input" placeholder="0.00" step="0.01" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="data">Data</label>
+                <input type="date" id="data" class="form-input" required />
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+              Registar Compra
+            </button>
+          </form>
+        </div>
+      </div>
 
-    <div id="listaSaidas"></div>
-    <div id="totalFiltrado" class="total" style="display:none;"></div>
+      <div class="card mb-6">
+        <div class="card-content">
+          <div class="filter-bar">
+            <input type="text" id="filtroProduto" class="form-input" placeholder="Filtrar por produto">
+            <select id="filtroMes" class="form-select">
+              <option value="">Todos os meses</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div id="totalFiltrado" class="card mb-6 hidden">
+        <div class="card-content">
+          <div class="stat-card">
+            <div class="stat-value" id="totalValor">0.00€</div>
+            <div class="stat-label">Total filtrado</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="listaSaidas"></div>
+
+      <div class="text-center mt-8">
+        <button id="toggleMesesBtn" class="btn btn-secondary hidden">Ver mais...</button>
+      </div>
+    </main>
   </div>
-    
+
   <script>
     let comprasOriginais = [];
     let mostrarTodos = false;
@@ -229,7 +113,7 @@
       const data = document.getElementById("data").value;
 
       if (!produto || !fornecedor || isNaN(valor) || !data) {
-        alert("Por favor preenche todos os campos.");
+        showNotification("Por favor preenche todos os campos.", "error");
         return;
       }
 
@@ -244,9 +128,10 @@
       if (resposta.ok) {
         document.getElementById("formSaida").reset();
         document.getElementById("data").value = new Date().toISOString().slice(0, 10);
+        showNotification("Compra registada com sucesso!", "success");
         carregarSaidas();
       } else {
-        alert("Erro ao adicionar compra.");
+        showNotification("Erro ao registar compra.", "error");
       }
     });
 
@@ -267,7 +152,7 @@
       const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
                           "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
-      select.innerHTML = '<option value="">Filtrar por Mês</option>';
+      select.innerHTML = '<option value="">Todos os meses</option>';
       meses.sort().reverse().forEach(m => {
         const [ano, mes] = m.split("-");
         const nomeMes = nomesMeses[parseInt(mes, 10) - 1];
@@ -289,14 +174,13 @@
       const totalDiv = document.getElementById("totalFiltrado");
       if (produto) {
         const total = filtradas.reduce((soma, c) => soma + (parseFloat(c.valor) || 0), 0);
-        totalDiv.style.display = "flex";
-        totalDiv.innerHTML = `<span>Total do produto:</span><span>${total.toFixed(2)}€</span>`;
+        totalDiv.classList.remove("hidden");
+        document.getElementById("totalValor").textContent = `${total.toFixed(2)}€`;
       } else {
-        totalDiv.style.display = "none";
-        totalDiv.innerHTML = "";
+        totalDiv.classList.add("hidden");
       }
 
-      mostrarTodos = !!produto || !!mes; // Mostra tudo se houver filtro
+      mostrarTodos = !!produto || !!mes;
       renderizarCompras(filtradas);
     }
 
@@ -313,9 +197,10 @@
       if (!confirm("Eliminar esta compra?")) return;
       const resposta = await fetch(`/saidas/${id}`, { method: "DELETE" });
       if (resposta.ok) {
+        showNotification("Compra eliminada com sucesso!", "success");
         carregarSaidas();
       } else {
-        alert("Erro ao eliminar compra.");
+        showNotification("Erro ao eliminar compra.", "error");
       }
     }
 
@@ -351,59 +236,118 @@
 
       mesesParaMostrar.forEach((mesAno, index) => {
         if (mostrarTodos && index === mesesRecentes.length && mesesAntigos.length > 0) {
-          const titulo = document.createElement("div");
-          titulo.className = "tituloMaisAntigas";
-          titulo.textContent = "Mais antigas";
-          listaDiv.appendChild(titulo);
+          const divider = document.createElement("div");
+          divider.className = "text-center text-2xl font-bold text-secondary mb-6 mt-8";
+          divider.textContent = "Mais antigas";
+          listaDiv.appendChild(divider);
         }
 
-        const divMes = document.createElement("div");
-        divMes.className = "mes";
-        divMes.textContent = formatarMesAno(mesAno);
-        listaDiv.appendChild(divMes);
+        const card = document.createElement("div");
+        card.className = "card month-section mb-4";
+
+        const header = document.createElement("div");
+        header.className = "month-header";
+        header.innerHTML = `
+          <div class="month-title">
+            <span>${formatarMesAno(mesAno)}</span>
+          </div>
+        `;
+
+        const content = document.createElement("div");
+        content.className = "month-content open";
+
+        const list = document.createElement("ul");
+        list.className = "list";
 
         let totalMes = 0;
         grupoPorMes[mesAno].sort((a, b) => a.data.localeCompare(b.data)).forEach((compra) => {
-          const divCompra = document.createElement("div");
-          divCompra.className = "compra";
-          divCompra.innerHTML = `
-            <div class="descricao">${compra.data} - ${compra.produto} em ${compra.fornecedor}</div>
-            <div class="valor-apagar">
-              <span>${compra.valor.toFixed(2)}€</span>
-              <button class="btnApagar" onclick="eliminarCompra(${compra.id})">🗑️</button>
-            </div>
-          `;
-          listaDiv.appendChild(divCompra);
+          const item = document.createElement("li");
+          item.className = "list-item";
+
+          const itemContent = document.createElement("div");
+          itemContent.className = "list-item-content";
+
+          const itemTitle = document.createElement("div");
+          itemTitle.className = "list-item-title";
+          itemTitle.textContent = `${compra.produto} - ${compra.fornecedor}`;
+
+          const itemSubtitle = document.createElement("div");
+          itemSubtitle.className = "list-item-subtitle";
+          itemSubtitle.textContent = compra.data;
+
+          itemContent.appendChild(itemTitle);
+          itemContent.appendChild(itemSubtitle);
+
+          const itemActions = document.createElement("div");
+          itemActions.className = "list-item-actions";
+
+          const valor = document.createElement("span");
+          valor.className = "font-semibold text-lg";
+          valor.textContent = `${compra.valor.toFixed(2)}€`;
+
+          const btnDelete = document.createElement("button");
+          btnDelete.className = "btn btn-error btn-sm btn-icon";
+          btnDelete.innerHTML = "🗑️";
+          btnDelete.onclick = () => eliminarCompra(compra.id);
+
+          itemActions.appendChild(valor);
+          itemActions.appendChild(btnDelete);
+
+          item.appendChild(itemContent);
+          item.appendChild(itemActions);
+          list.appendChild(item);
           totalMes += compra.valor;
         });
 
-        const divTotal = document.createElement("div");
-        divTotal.className = "total";
-        divTotal.innerHTML = `<span>Total:</span><span>${totalMes.toFixed(2)}€</span>`;
-        listaDiv.appendChild(divTotal);
+        // Add total
+        const totalItem = document.createElement("li");
+        totalItem.className = "list-item";
+        totalItem.style.borderTop = "2px solid var(--secondary-200)";
+        totalItem.style.fontWeight = "600";
+
+        const totalContent = document.createElement("div");
+        totalContent.className = "list-item-content";
+        totalContent.innerHTML = `<div class="list-item-title">Total do mês</div>`;
+
+        const totalValue = document.createElement("div");
+        totalValue.className = "font-bold text-xl text-primary";
+        totalValue.textContent = `${totalMes.toFixed(2)}€`;
+
+        totalItem.appendChild(totalContent);
+        totalItem.appendChild(totalValue);
+        list.appendChild(totalItem);
+
+        content.appendChild(list);
+        card.appendChild(header);
+        card.appendChild(content);
+        listaDiv.appendChild(card);
       });
 
-      // Remover botão antigo, se existir
+      // Toggle button
       const btnAntigo = document.getElementById("toggleMesesBtn");
-      if (btnAntigo) btnAntigo.remove();
-
-      // Adicionar botão "Ver mais..." ou "Ver menos..." consoante o estado, só se não houver filtro
-      if (!filtroAtivo && mesesAntigos.length > 0) {
-        const btn = document.createElement("button");
-        btn.id = "toggleMesesBtn";
-        btn.type = "button";
-        btn.textContent = mostrarTodos ? "Ver menos..." : "Ver mais...";
-        btn.onclick = (e) => {
-          e.preventDefault();
-          mostrarTodos = !mostrarTodos;
-          renderizarCompras(compras, false);
-        };
-        listaDiv.after(btn);
+      if (btnAntigo) {
+        btnAntigo.classList.add("hidden");
+        if (!filtroAtivo && mesesAntigos.length > 0) {
+          btnAntigo.classList.remove("hidden");
+          btnAntigo.textContent = mostrarTodos ? "Ver menos..." : "Ver mais...";
+          btnAntigo.onclick = () => {
+            mostrarTodos = !mostrarTodos;
+            renderizarCompras(compras, false);
+          };
+        }
       }
-
     }
 
+    function showNotification(message, type = "success") {
+      const notification = document.createElement("div");
+      notification.className = `notification ${type === "success" ? "notification-success" : "notification-error"}`;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    }
   </script>
-
 </body>
 </html>

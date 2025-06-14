@@ -1,286 +1,170 @@
 <!DOCTYPE html>
 <html lang="pt">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Nova Encomenda</title>
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <style>
-      * {
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: "Segoe UI", sans-serif;
-        margin: 0;
-        padding: 0 10px;
-        max-width: 700px;
-        margin-inline: auto;
-        background: #f5f5f5;
-        font-size: 16px;
-      }
-
-      header {
-        margin-top: 30px;
-        padding: 20px 0;
-        background: #f5f5f5;
-        border-bottom: 1px solid #ddd;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      header h1 {
-        margin: 0;
-        font-size: 28px;
-        text-align: center;
-        flex: 1;
-      }
-
-      nav {
-        position: static;
-      }
-
-      nav button {
-        padding: 6px 10px;
-        font-size: 15px;
-        border: none;
-        border-radius: 6px;
-        background-color: #f0f0f0;
-        cursor: pointer;
-        transition: background 0.2s;
-      }
-
-      nav button:hover {
-        background-color: #d0d0d0;
-      }
-
-      .conteudo {
-        margin-top: 30px;
-        max-width: 700px;
-        margin-left: auto;
-        margin-right: auto;
-        background: white;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      }
-
-      form {
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      input[type="text"],
-      input[type="tel"],
-      input[type="date"] {
-        width: 100%;
-        padding: 10px;
-        font-size: 16px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        background-color: white;
-        transition: background 0.2s;
-        box-sizing: border-box;
-      }
-
-      input[type="text"]:focus,
-      input[type="tel"]:focus,
-      input[type="date"]:focus {
-        background-color: white;
-        outline: none;
-        border-color: #1976d2;
-      }
-
-      button[type="submit"] {
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        cursor: pointer;
-        padding: 12px 20px; /* aumenta a altura e a largura do botão */
-        font-size: 16px;    /* opcional, para texto maior */
-        border-radius: 6px; /* para manter bordas arredondadas */
-        transition: background 0.3s;
-      }
-
-      button[type="submit"]:hover {
-        background-color: #388E3C;
-      }
-
-      /* Botão Listagem fora do form */
-      .btn-listagem-container {
-        display: flex;
-        justify-content: center;
-        margin-top: 20px;
-      }
-
-      .btn-listagem-container button {
-        background-color: #f0f0f0;
-        color: #000;
-        border: none;
-        cursor: pointer;
-        padding: 12px 20px;
-        border-radius: 6px;
-        font-size: 16px;
-        transition: background 0.3s;
-        white-space: nowrap;
-      }
-
-      .btn-listagem-container button:hover {
-        background-color: #d0d0d0;
-      }
-
-      .popup {
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: #323232;
-        color: white;
-        padding: 1rem 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        z-index: 9999;
-        animation: fadeout 1s ease-in-out 2s forwards;
-      }
-
-      @keyframes fadeout {
-        to {
-          opacity: 0;
-          transform: translateX(-50%) translateY(-10px);
-        }
-      }
-
-      @media (max-width: 480px) {
-        nav {
-          position: static;
-          margin-top: 15px;
-          justify-content: center;
-          flex-wrap: wrap;
-        }
-
-        nav button {
-          flex: 1 1 auto;
-          min-width: 120px;
-          text-align: center;
-        }
-      }
-          .separador {
-            border: none;
-            border-top: 1px solid #ccc;
-            margin: 40px 0;
-            width: 100%;
-            max-width: 400px; /* opcional, para limitar o tamanho */
-            margin-left: auto;
-            margin-right: auto;
-          }
-      .btn-listagem {
-        padding: 14px 28px; /* aumenta o padding para ficar maior */
-        font-size: 18px;    /* aumenta o tamanho do texto */
-        min-width: 200px;   /* largura mínima maior */
-        border-radius: 8px; /* bordas um pouco mais arredondadas */
-      }
-      .btn-home {
-        padding: 6px 10px;  /* menos espaço à volta */
-        min-width: auto;    /* sem largura mínima */
-        width: auto;        /* ajusta ao conteúdo */
-        font-size: 18px;    /* mantém o tamanho do ícone legível */
-        border-radius: 6px;
-      }
-      @media (min-width: 768px) {
-        body {
-          padding: 20px;
-        }
-      }
-    </style>
-  </head>
-
-  <body>
-    <header>
-      <h1>Nova Encomenda</h1>
-      <nav>
-        <button onclick="location.href='home.html'" class="btn-home">🏠</button>
-      </nav>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nova Encomenda - Gestão TBA-FR</title>
+  <link rel="stylesheet" href="../public/styles/main.css">
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <div class="header-content">
+        <a href="home.html" class="logo">
+          <div class="logo-icon">🏠</div>
+          <span>Gestão TBA-FR</span>
+        </a>
+        <nav class="nav-menu">
+          <a href="home.html" class="nav-link">
+            <span>🏠</span>
+            <span>Home</span>
+          </a>
+          <a href="encomendas.html" class="nav-link active">
+            <span>➕</span>
+            <span>Nova</span>
+          </a>
+          <a href="verenc.html" class="nav-link">
+            <span>📝</span>
+            <span>Listagem</span>
+          </a>
+        </nav>
+      </div>
     </header>
 
-    <main class="conteudo">
-      <form id="encomendaForm">
-        <input
-          type="text"
-          name="nome"
-          placeholder="Ex: Frederico Santos"
-          required
-        />
-        <input
-          type="tel"
-          name="telemovel"
-          placeholder="Ex: 912345678 (opcional)"
-          inputmode="numeric"
-          pattern="[0-9]*"
-        />
-        <input type="text" name="produto" placeholder="Ex: Vinho branco" required />
-        <input type="text" name="quantidade" placeholder="Ex: 3 garrafões" required />
-        <input type="date" name="data" id="dataInput" required />
-        <button type="submit">Adicionar Encomenda</button>
-      </form>
-      <hr class="separador" />
-      <div class="btn-listagem-container">
-        <button type="button" class="btn-listagem" onclick="location.href='verenc.html'">📝 Listagem</button>
+    <main class="main-content">
+      <div class="card">
+        <div class="card-header">
+          <h1 class="card-title">Nova Encomenda</h1>
+          <p class="card-subtitle">Adicionar uma nova encomenda ao sistema</p>
+        </div>
+        <div class="card-content">
+          <form id="encomendaForm">
+            <div class="form-group">
+              <label class="form-label" for="nome">Nome do Cliente</label>
+              <input
+                type="text"
+                id="nome"
+                name="nome"
+                class="form-input"
+                placeholder="Ex: Frederico Santos"
+                required
+              />
+            </div>
 
+            <div class="form-group">
+              <label class="form-label" for="telemovel">Telemóvel (opcional)</label>
+              <input
+                type="tel"
+                id="telemovel"
+                name="telemovel"
+                class="form-input"
+                placeholder="Ex: 912345678"
+                inputmode="numeric"
+                pattern="[0-9]*"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="produto">Produto</label>
+              <input
+                type="text"
+                id="produto"
+                name="produto"
+                class="form-input"
+                placeholder="Ex: Vinho branco"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="quantidade">Quantidade</label>
+              <input
+                type="text"
+                id="quantidade"
+                name="quantidade"
+                class="form-input"
+                placeholder="Ex: 3 garrafões"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="data">Data</label>
+              <input
+                type="date"
+                id="data"
+                name="data"
+                class="form-input"
+                required
+              />
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+              Adicionar Encomenda
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="text-center mt-8">
+        <a href="verenc.html" class="btn btn-secondary btn-lg">
+          📝 Ver Listagem
+        </a>
       </div>
     </main>
+  </div>
 
-    <script>
-      // Preencher data atual
-      const hoje = new Date().toISOString().split('T')[0];
-      document.getElementById("dataInput").value = hoje;
+  <script>
+    // Set today's date as default
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById("data").value = today;
 
-      const form = document.getElementById("encomendaForm");
+    const form = document.getElementById("encomendaForm");
 
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-        const dados = {
-          nome: form.nome.value,
-          telemovel: form.telemovel.value,
-          produto: form.produto.value,
-          quantidade: form.quantidade.value,
-          data: form.data.value
-        };
+      const formData = new FormData(form);
+      const dados = {
+        nome: formData.get('nome'),
+        telemovel: formData.get('telemovel'),
+        produto: formData.get('produto'),
+        quantidade: formData.get('quantidade'),
+        data: formData.get('data')
+      };
 
-        try {
-          const resposta = await fetch("/adicionar-encomenda", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(dados)
-          });
+      try {
+        const response = await fetch("/adicionar-encomenda", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(dados)
+        });
 
-          if (resposta.ok) {
-            mostrarPopup("Encomenda adicionada com sucesso ✅");
-            form.reset();
-            document.getElementById("dataInput").value = hoje;
-          } else {
-            mostrarPopup("Erro ao adicionar encomenda ❌");
-          }
-        } catch (erro) {
-          console.error(erro);
-          mostrarPopup("Erro de ligação ao servidor ⚠️");
+        if (response.ok) {
+          showNotification("Encomenda adicionada com sucesso ✅", "success");
+          form.reset();
+          document.getElementById("data").value = today;
+        } else {
+          showNotification("Erro ao adicionar encomenda ❌", "error");
         }
-      });
-
-      function mostrarPopup(mensagem) {
-        const popup = document.createElement("div");
-        popup.className = "popup";
-        popup.textContent = mensagem;
-        document.body.appendChild(popup);
-        setTimeout(() => {
-          popup.remove();
-        }, 3000);
+      } catch (error) {
+        console.error(error);
+        showNotification("Erro de ligação ao servidor ⚠️", "error");
       }
-    </script>
-  </body>
+    });
+
+    function showNotification(message, type = "success") {
+      const notification = document.createElement("div");
+      notification.className = `notification ${type === "success" ? "notification-success" : "notification-error"}`;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    }
+  </script>
+</body>
 </html>
